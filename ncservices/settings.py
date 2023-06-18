@@ -36,6 +36,16 @@ INSTALLED_APPS = [
     "allianceauth.notifications",
     "allianceauth.thirdparty.navhelper",
     "allianceauth.analytics",
+    # custom modules
+    # "allianceauth.services.modules.discord",
+    "allianceauth.optimer",
+    "allianceauth.timerboard",
+    "allianceauth.eveonline.autogroups",
+    "corptools",
+    "securegroups",
+    "eveuniverse",
+    "memberaudit",
+    "memberaudit_securegroups",
 ]
 
 SECRET_KEY = "wow I'm a really bad default secret key"
@@ -44,26 +54,51 @@ redis_host = env.str("REDIS_HOST")
 # Celery configuration
 BROKER_URL = f"redis://{redis_host}:6379/0"
 CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
+
 CELERYBEAT_SCHEDULE = {
     "esi_cleanup_callbackredirect": {
         "task": "esi.tasks.cleanup_callbackredirect",
-        "schedule": crontab(minute=0, hour="*/4"),
+        "schedule": crontab(minute="0", hour="*/4"),
     },
     "esi_cleanup_token": {
         "task": "esi.tasks.cleanup_token",
-        "schedule": crontab(minute=0, hour=0),
+        "schedule": crontab(minute="0", hour="0"),
     },
     "run_model_update": {
         "task": "allianceauth.eveonline.tasks.run_model_update",
-        "schedule": crontab(minute=0, hour="*/6"),
+        "schedule": crontab(minute="0", hour="*/6"),
     },
     "check_all_character_ownership": {
         "task": "allianceauth.authentication.tasks.check_all_character_ownership",
-        "schedule": crontab(minute=0, hour="*/4"),
+        "schedule": crontab(minute="0", hour="*/4"),
     },
     "analytics_daily_stats": {
         "task": "allianceauth.analytics.tasks.analytics_daily_stats",
-        "schedule": crontab(minute=0, hour=2),
+        "schedule": crontab(minute="0", hour="2"),
+    },
+    "discord.update_all_usernames": {
+        "task": "discord.update_all_usernames",
+        "schedule": crontab(minute="0", hour="*/12"),
+    },
+    "memberaudit_run_regular_updates": {
+        "task": "memberaudit.tasks.run_regular_updates",
+        "schedule": crontab(minute="0", hour="*/1"),
+    },
+    "sovtimer.tasks.run_sov_campaign_updates": {
+        "task": "sovtimer.tasks.run_sov_campaign_updates",
+        "schedule": 30.0,
+    },
+    "killtracker_run_killtracker": {
+        "task": "killtracker.tasks.run_killtracker",
+        "schedule": crontab(minute="*/1"),
+    },
+    "mailrelay_forward_new_mails": {
+        "task": "mailrelay.tasks.forward_new_mails",
+        "schedule": crontab(minute="*/5"),
+    },
+    "freight_run_contracts_sync": {
+        "task": "freight.tasks.run_contracts_sync",
+        "schedule": crontab(minute="*/10"),
     },
 }
 
