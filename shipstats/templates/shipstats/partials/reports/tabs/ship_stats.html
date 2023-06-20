@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div role="tabpanel" class="tab-pane active" id="ship_stats">
+    <div class="table-responsive">
+        <table class="table table-striped table-width-fix" id="tab_ship_stats">
+            <thead>
+                <tr>
+                    <th>{% translate 'Type' %}</th>
+                    <th>{% translate 'Group' %}</th>
+                    <th>{% translate 'Location' %}</th>
+                    <th>{% translate 'Region' %}</th>
+                    <th>{% translate 'Corporation' %}</th>
+                    <th>{% translate 'Character' %}</th>
+                    <th>{% translate 'Main' %}</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+        </table>
+    </div>
+    {% include 'memberaudit/partials/reports/tabs/_compliance_color_code.html' %}
+</div>

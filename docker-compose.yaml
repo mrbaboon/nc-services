@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      - mariadb
       - redis
     env_file:
       - .env
@@ -17,9 +17,9 @@ services:
   worker:
     image: ncservices
     build: .
-    command: celery -A ncservices.celery worker -l info
+    command: celery -A ncservices.celery worker -l info --max-tasks-per-child=250 --max-memory-per-child=262144 --pool=gevent --concurrency=30
     depends_on:
-      - mysql
+      - mariadb
       - redis
     env_file:
       - .env
@@ -31,35 +31,38 @@ services:
     build: .
     command: celery -A ncservices.celery beat -l info
     depends_on:
-      - mysql
+      - mariadb
       - redis
     env_file:
       - .env
     volumes:
       - .:/opt/ncservices
 
-  mysql:
-    image: mysql:8
+  mariadb:
+    image: mariadb:10
     env_file:
       - .env
     ports:
       - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
 
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
 
-  phpmyadmin:
-    image: phpmyadmin
-    ports:
-      - 3380:80
-    env_file:
-      - .env
+  adminer:
+    image: adminer
     depends_on:
-      - mysql
+      - mariadb
+    ports:
+      - 3380:8080
 
   mailcatcher:
     image: dockage/mailcatcher
     ports:
       - "1080:1080"
+
+volumes:
+  dbdata:

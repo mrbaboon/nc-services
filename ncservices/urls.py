@@ -1,9 +1,10 @@
 from django.conf.urls import include
 from allianceauth import urls
-from django.urls import re_path
+from django.urls import re_path, path
 
 urlpatterns = [
     re_path(r"", include(urls)),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 handler500 = "allianceauth.views.Generic500Redirect"

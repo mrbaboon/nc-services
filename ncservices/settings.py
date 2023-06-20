@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     "eveuniverse",
     "memberaudit",
     "memberaudit_securegroups",
+    "debug_toolbar",
+    "shipstats",
 ]
 
-SECRET_KEY = "wow I'm a really bad default secret key"
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 redis_host = env.str("REDIS_HOST")
 # Celery configuration
@@ -84,14 +86,14 @@ CELERYBEAT_SCHEDULE = {
         "task": "memberaudit.tasks.run_regular_updates",
         "schedule": crontab(minute="0", hour="*/1"),
     },
-    "sovtimer.tasks.run_sov_campaign_updates": {
-        "task": "sovtimer.tasks.run_sov_campaign_updates",
-        "schedule": 30.0,
-    },
-    "killtracker_run_killtracker": {
-        "task": "killtracker.tasks.run_killtracker",
-        "schedule": crontab(minute="*/1"),
-    },
+    # "sovtimer.tasks.run_sov_campaign_updates": {
+    #     "task": "sovtimer.tasks.run_sov_campaign_updates",
+    #     "schedule": 30.0,
+    # },
+    # "killtracker_run_killtracker": {
+    #     "task": "killtracker.tasks.run_killtracker",
+    #     "schedule": crontab(minute="*/1"),
+    # },
     "mailrelay_forward_new_mails": {
         "task": "mailrelay.tasks.forward_new_mails",
         "schedule": crontab(minute="*/5"),
@@ -108,6 +110,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "allianceauth.authentication.middleware.UserSettingsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -118,6 +121,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allianceauth.analytics.middleware.AnalyticsMiddleware",
 ]
+
+
+def show_toolbar_callback(request):
+    return DEBUG
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": "ncservices.settings.show_toolbar_callback"
+}
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale/"),)
 
@@ -230,6 +242,7 @@ LOGIN_TOKEN_SCOPES = ["publicData"]
 ACCOUNT_ACTIVATION_DAYS = 1
 
 ESI_API_URL = "https://esi.evetech.net/"
+ESI_CONNECTION_POOL_MAXSIZE = 20
 
 LOGGING = {
     "version": 1,
@@ -271,6 +284,10 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
         },
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
     },
 }
 
@@ -301,6 +318,7 @@ INSTALLED_APPS += []
 # To change the logging level for extensions, uncomment the following line.
 # LOGGING['handlers']['extension_file']['level'] = 'DEBUG'
 
+ANALYTICS_DISABLED = True
 
 # Enter credentials to use MySQL/MariaDB. Comment out to use sqlite3
 DATABASES = {

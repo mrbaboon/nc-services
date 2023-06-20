@@ -25,6 +25,11 @@ app.conf.worker_prefetch_multiplier = (
     1  # only prefetch single tasks at a time on the workers so that prio tasks happen
 )
 
+app.conf.ONCE = {
+    "backend": "eveuniverse.backends.DjangoBackend",
+    "settings": {},
+}
+
 app.conf.ONCE = {"backend": "allianceauth.services.tasks.DjangoBackend", "settings": {}}
 
 # Load task modules from all registered Django app configs.
