@@ -1,10 +1,10 @@
 import logging
 
 from allianceauth.eveonline.models import EveCharacter
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from eveuniverse.models import EveRegion
-from memberaudit.models import EveShipType, CharacterAsset, Character
+from memberaudit.models import EveShipType, CharacterAsset
 
 logger = logging.getLogger(__name__)
 
